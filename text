@@ -1,1 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computation and Simulation | Harun Farocki Research</title>
+    <style>
+        :root {
+            --bg-slate-50: #f8fafc;
+            --bg-slate-900: #0f172a;
+            --text-slate-800: #1e293b;
+            --text-slate-100: #f1f5f9;
+            --border-gray-900: #1e293b;
+            --primary-accent: #4f46e5;
+            --secondary-accent: #818cf8;
+            --card-bg: #ffffff;
+            --dark-card-bg: #1e293b;
+            --divider-color: #e2e8f0;
+        }
 
+        /* Dark mode variables */
+        .dark {
+            --bg-slate-50: var(--bg-slate-900);
+            --text-slate-800: var(--text-slate-100);
+            --card-bg: var(--dark-card-bg);
+            --divider-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', 'Georgia', serif;
+            background-color: var(--bg-slate-50);
+            color: var(--text-slate-800);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        #global-nav {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border-gray-900);
+        }
+
+        .nav-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .logo {
+            width: 50px;
+            height: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-right: 1.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-accent);
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1rem;
+            background-color: var(--border-gray-900);
+            color: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--border-gray-900);
+        }
+
+        .btn-outline {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            color: var(--border-gray-900);
+            border: 2px solid var(--border-gray-900);
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--border-gray-900);
+            color: #f1f5f9;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            margin-bottom: 4rem;
+        }
+
+        .content-wrapper {
+            width: 91.666667%;
+            margin: 0 auto;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            border-bottom: 1px solid var(--divider-color);
+            padding-top: 0.75rem;
+            padding-bottom: 1.25rem;
+        }
+
+        .section-header {
+            display: grid;
+            gap: 0.5rem;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .breadcrumb-link {
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+
+        .course-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .course-subtitle {
+            font-size: 1.25rem;
+            font-weight: normal;
+            margin-top: 0.25rem;
+            color: #64748b;
+        }
+
+        .course-description, .section-content {
+            margin-top: 1.25rem;
+            margin-bottom: 2rem;
+            white-space: pre-wrap;
+            line-height: 1.75;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .concept-card {
+            background-color: rgba(79, 70, 229, 0.1);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.375rem;
+            border-left: 4px solid var(--primary-accent);
+        }
+
+        .dark .concept-card {
+            background-color: rgba(129, 140, 248, 0.15);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            width: 80%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: var(--text-slate-800);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+
+        .original-text {
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .menu-icon {
+                display: block;
+                cursor: pointer;
+            }
+            .course-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+
+    <div id="global-nav" class="border-b-2 border-b-gray-900 dark:border-b-gray-100 border-bottom">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" rx="10" fill="#4f46e5" />
+                    <circle cx="50" cy="50" r="20" stroke="white" stroke-width="5" fill="none"/>
+                    <line x1="30" y1="30" x2="70" y2="70" stroke="white" stroke-width="3"/>
+                </svg>
+                <div>
+                    <a href="/">
+                        <div class="text-2xl md:text-xl">Computation and Simulation</div>
+                        <div class="hidden md:flex text-sm text-gray-600 dark:text-gray-400">Digital Image Characteristics Study</div>
+                    </a>
+                </div>
+            </div>
+            <div class="md:hidden menu-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="hidden md:flex items-center gap-6 nav-links">
+                <a class="btn-primary" href="#" onclick="toggleDarkMode()">Toggle Dark Mode</a>
+                <a class="nav-link hover:underline" href="#intro">Research Introduction</a>
+                <a class="nav-link hover:underline" href="#structure">Core Arguments</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content container md:w-10/12 m-auto">
+        <div class="content-wrapper">
+            <div class="section border-bottom">
+                <div class="section-header">
+                    <div class="breadcrumbs flex">
+                        <p class="small"><a class="text-gray-600 hover:underline" href="#">@Academic Research</a> </p>
+                        <p class="small">/ <a class="text-gray-600 hover:underline" href="#">Art Theory</a></p>
+                        <p class="small"> / Computation and Simulation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex mt-8">
+                <div class="w-full pt-3 pb-5 flex flex-col gap-3">
+                    <div class="md:w-full flex flex-col gap-6 md:gap-2 md:text-sm mb-4 text-gray-600">
+                        <div class="course-info">
+                            <div class="flex md:flex-row justify-between gap-4">
+                                <div class="italic">Academic Research / Art Theory</div>
+                                <div class="italic">Media Archaeology</div>
+                                <div class="flex flex-col items-end md:flex-row gap-0 md:gap-2 italic">
+                                    <div>Digital Ontology</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="md:w-1/2 my-5 flex flex-col">
+                            <h1 class="course-title">Computation and Simulation</h1>
+                            <p class="course-subtitle">—— A Study on the Digital Image Characteristics in Harun Farocki's Works</p>
+                        </div>
+
+                        <div class="md:w-1/2 mt-5 mb-8 flex flex-col">
+                            <div class="flex gap-3">
+                                <div class="flex gap-2">
+                                    <a href="#"><button class="rounded-sm border border-gray-900 text-gray-900 px-3 py-1 text-sm dark:border-gray-300 dark:text-gray-300">Digital Image</button></a>
+                                    <a href="#"><button class="rounded-sm border border-gray-900 text-gray-900 px-3 py-1 text-sm dark:border-gray-300 dark:text-gray-300">Media Archaeology</button></a>
+                                    <a href="#"><button class="rounded-sm border border-gray-900 text-gray-900 px-3 py-1 text-sm dark:border-gray-300 dark:text-gray-300">Harun Farocki</button></a>
+                                    <a href="#"><button class="rounded-sm border border-gray-900 text-gray-900 px-3 py-1 text-sm dark:border-gray-300 dark:text-gray-300">Ontology</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full mt-5 mb-8 flex flex-col">
+                        <div class="flex flex-col gap-2 mb-2">
+                            <div class="flex gap-3 items-center mb-3">
+                                <h2 id="intro" class="section-title font-bold text-lg">Research Introduction</h2>
+                            </div>
+                            <div class="course-description whitespace-pre-wrap">
+This study focuses on German video artist Harun Farocki's late four-screen installation work "Parallel I-IV" (2012-2014), using it as a key text to delve into a profound philosophical exploration of the nature of computer-generated imagery (CGI). The paper argues that Farocki, by tracing the thirty-year technical evolution of video game images from abstract lines to realistic rendering, reveals that the core operating logic of digital images lies in "computation" and "simulation," rather than the traditional film theory-dependent "indexical representation" based on photography. This research not only challenges classical film ontology but also constructs a critical framework for examining how algorithms manipulate human perception patterns by quantifying natural laws and simulating the human sensory system while shaping a "realistic" experience.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full mt-5 mb-8 flex flex-col">
+                        <div class="flex flex-col gap-2 mb-2">
+                            <div>
+                                <div class="flex gap-3 items-center mb-2">
+                                    <h2 id="structure" class="section-title font-bold text-lg">Core Arguments and Structure</h2>
+                                </div>
+                                <div class="section-content">
+                                    <h3>1. Research Background and Core Object</h3>
+                                    <p>This study is based on Farocki's creative methodology—especially "multi-screen installations" and "operative images"—treating the "Parallel" series as a key "media archaeology" practice. The work uses popular cultural products like video games as an entry point to philosophically reflect on the generative logic of digital images.</p>
+
+                                    <h3>2. The Dual Logic of Digital Images: Computability and Simulability</h3>
+                                    <p>The core argument of the paper is that the essence of digital images is an "ideal simulacrum." Its realism stems from:</p>
+                                    <div class="concept-card">
+                                        <h4>Computation</h4>
+                                        <p>The quantification and abstraction of natural laws (such as physics, optics) by algorithms.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h4>Simulation</h4>
+                                        <p>The imitation and data reconstruction of the human sensory system (especially visual perception).</p>
+                                    </div>
+                                    <p>This logic means that digital images are generated, not recorded; their reference is internal mathematical models and sensory data models, rather than external reality.</p>
+
+                                    <h3>3. Challenging Traditional "Representation" Concepts</h3>
+                                    <p>Farocki's work juxtaposes the technological history of video game imagery with art historical imagery (such as Renaissance painting, modernist abstraction), thus proposing: the history of digital images is departing from the track of "representing reality," shifting towards constructing a self-consistent simulation system based on algorithms. This directly questions the "representation" ontology of traditional film theory, which is based on photography.</p>
+
+                                    <h3>4. Extension of Technical Critique: Perceptual Manipulation and "Incomputability"</h3>
+                                    <p>The study further points out that the deeper impact of this computation-simulation logic lies in the reshaping and manipulation of the human perceptual system. When algorithms can calculate and simulate sensory input, they acquire the potential power to influence or even define how we "see" and "interact." The paper ultimately directs its critique toward the question of the limits of this manipulation, that is, whether there exists a domain that algorithms cannot calculate or simulations cannot encompass—the philosophical proposition of "incomputability".</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operation Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="openModal()">View Original Text</button>
+                        <button class="btn-outline" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>"Computation and Simulation — A Study on the Digital Image Characteristics in Harun Farocki's Works"</h2>
+            <div class="original-text">
+                <!-- 
+                **********************************************************************************************
+                Please add your complete original thesis text here.
+                For example:
+                <h3>Introduction</h3>
+                <p>In today's rapidly developing digital technology...</p>
+                <h3>Chapter One: The Ontological Crisis of Digital Images</h3>
+                <p>Since the invention of photography, the ontological foundation of traditional images has always been based on its causal link with reality...</p>
+                **********************************************************************************************
+                -->
+              
+                preface
+In an era where digital technology has deeply integrated into artistic production and dissemination, the algorithmic reshaping of visual experiences has become an unavoidable cognitive challenge. As Shi Chang observed: "Invisible imagery confuses [Shang Shi. Machine Eyes: From Operational Images to Intelligent Vision [J]. Nanjing Social Sciences, 2022, (12):135-144.
+]us, algorithmic black boxes perplex us. In this increasingly transparent world, we must maintain critical scrutiny of artificial intelligence." Computer-generated imagery, with its hyper-realistic fidelity and programmable nature, is fundamentally altering humanity's perception of "reality." From Hollywood's virtual sets to social media filters, algorithms abstract natural laws and human senses into calculable datasets through mathematical modeling, establishing a technological hegemony centered on "simulation as reality." When algorithms attempt to govern all experiences through computational logic, life experiences resistant to quantification—such as the ambiguity of memory and the incommensurability of emotions—become "residues" rejected by technical rationality. Against this backdrop, Harun Farouki's late work *Parallel I-IV* offers a unique perspective through the lens of image media archaeology, providing an ontological framework for re-examining digital imagery. Farouki selects video games—a quintessential "algorithmic art" —as a critical medium. By visually interpreting the technological evolution of game graphics from early vector lines to 3D hyper-realistic rendering, he reveals that CGI's "perfect simulation" is essentially a forced abstraction of natural forms through computational rationality.
+In both art studies and communication studies, Faroqi's research has drawn widespread attention to his concept of "operational images." Hal Foster noted that Faroqi's operational images reveal a visual unconscious distinct from the cinematic eye—what he termed the "machine eye." Shi Chang systematically traced the evolution of the machine eye from intelligent vision to operational images, highlighting the obscuring nature of "invisible images" generated by algorithmic black boxes.
+Domestic research on Harun Farouki primarily focuses on the perspectives of essay films and post-humanist cinema. Through analyzing Farouki's visual works, scholars explore strategies and pathways for contemporary essay films. In "The Development Status and Trends of Contemporary Essay Films," Qian Jin summarizes Farouki's visual practices, such as his four-screen video installation "Serious Games," which examines the U.S. military's use of video games and virtual technologies. Qian interprets this as a sublation and innovation of the concept of "essay film" itself, which serves both as a research subject and context. Jia Tianyu's "Argumentative Essay Films in the Post-Humanist Context" uses Farouki as a case study to explore the potential of argumentative essay films for socio-political critique. He views Farouki's "operational image" practice as political essay films that develop political discourse through argumentation. By analyzing the emotional delivery of off-screen narration in "The Unextinguished Fire" and the interruption and reorganization of narrative in "World Images and War Inscriptions," Qian points out that Farouki's approach redirects audiences from the film itself to the medium of cinema.
+In international academia, scholars including Siegfried Zielinski have connected Thomas Faro's works with the theory of visual archaeology, analyzing how his imagery reveals the societal impact of technology. In his book *Film from a Mediatheoretical Perspective: An Interview with Thomas Elser*, Elser argues that Faro influenced his reflections on the complex history of surveillance, the role of film installations in wartime machinery, and the diverse applications of' operating images' since the mid-19th century.
+
+This study examines how Faro's *Parallel I-IV* transforms digital imagery from a technological spectacle into an "interface apparatus" for critiquing cognitive violence. Through multi-screen montage, he reveals how algorithms encode natural laws and perceptual experiences into executable protocols, while exposing computational logic's fractures through media reflexivity. By engaging in interdisciplinary theoretical dialogue, this paper reconsiders the relationship between art and technology in the digital age from a computational perspective. In an era where algorithmic governance continually compresses free experience spaces, art's mission is not to reject technology but to intervene in its material operations— "returning from software to hardware" —thus awakening aesthetic potential through the tension between computability and incomputability.
+
+
+
+	
+I. Background of Faroggi Imaging Practice
+Harun Farocki, a prolific video artist, has employed diverse creative techniques throughout his extensive practice. Throughout his career, he has engaged deeply with social realities through video as a medium. Additionally, he has been active in interdisciplinary collaborations as a screenwriter, actor, and producer.
+
+(1) Multi-screen practice
+Helen Farouki's multi-screen practice represents a groundbreaking innovation in her visual art, characterized by reconfiguring visual structures through spatial media installations to challenge traditional linear narrative logic. Her work *Depth Game* (2007) employs 12 screens simultaneously displaying football match footage, fragmenting the single-field [Zhao Shuhe. Duge Image Exploration [D]. China Film Art Research Center, 2023:34-36.]view into tactical analysis, audience reactions, and referee perspectives to simulate the visual system of military surveillance[]. This multi-screen installation becomes a technical metaphor, where the proliferation of fragmented screens mirrors the omnipresence of contemporary image surveillance networks. In *Workers Leaving the Factory* (1995/2006), Farouki [Hal Foster, Zhou Wanjing. Machine Vision and Automated Surveillance Images: A Film of Harun Farkhawi's Thesis [J]. Art Horizons, 2020, (06):115-123.
+]juxtaposes original footage from the Lumière brothers' eponymous film with historical worker images, disrupting linear visual narratives through temporal dislocation across multiple screens to reveal the continuity of labor under capitalism. Her practice also implicitly reimagines cinematic montage[]. Unlike traditional linear editing, multi-screen installations achieve free viewer perspective switching through spatial montage, presenting visual relationships as open network structures. In *On the Composition of Griffith's Film* (2006), Farouki deconstructs early film montage grammar by reconstructing multi-perspective visual pathways to counter mainstream narrative ideologies.
+
+(2) Operation Image
+Operational Images, a central concept in Harun Farouki's film theory, represents a theoretical breakthrough that transcends traditional ontological focus on "representation." This framework examines how images function within technological systems through their production logic and power dynamics. Distinct from aesthetic expressions or realistic depictions, operational images are instrumentalized and action-oriented. They integrate with human organs and perception into cybernetic control systems, directly participating in military, industrial, and surveillance operations. Through technical analysis of military imagery from WWII to the Gulf War, Farouki reveals how these images evolved from "visual evidence" into "digital action commands" within cybernetic feedback loops. The 1944 U.S. military reconnaissance photographs of concentration camps, though using analog technology, already embodied digital-era algorithmic logic. These images were reduced to coordinate data for bombing target tracking rather than reconstructing reality. Farouki's work exemplifies how images, through mediated abstraction, strip away sensory authenticity, inspiring later film theorists to explore how cinema creates immersive illusions through "reliable audiovisual mediums," trapping audiences in passive "distracted" states.
+In *Parallel I-IV*, Faroq extends archaeological studies of operational imagery to the realm of video games. Through his medium archaeology of computer graphics evolution spanning three decades, Faroq reveals that game imagery is essentially "rootless simulations." The generation of game scenes relies on database calls and real-time computations by physics engines. This modular production method eliminates the "authorship" of traditional imagery, transforming visuals into visualized products of algorithmic rules and objects operable by users. When players control in-game characters, they must adhere to built-in physics rules and mission logic, while their sensory experiences are enveloped by virtual objects shaped through dynamic blurring, light rendering, and other simulation technologies. This creates a technological [Zhang Moyan. Why is Film War? -A Study Centered on the Discourses of Villerrio, Baudrillard, and Zizek [J]. Beijing Film Academy Journal, 2023, (09):25-34.
+]manipulation and numbing of human perception. The algorithms constructing these perceptual "controllers" effectively convert free will into predictable, calculable operational commands through computational processing of human sensory systems. Just as the "virtual battlefield" of Gulf War media broadcasts blurred the line between reality and simulation, enabling audiences to unconsciously accept narratives legitimizing war, Faroq's operational imagery theory ultimately reveals "invisible labor." In the labor of image production—whether through game developers' code writing, algorithm optimization in military simulation systems, or facial recognition data training behind surveillance cameras—the material foundation of image production remains obscured by technological black boxes.
+
+(3) Technical Critique
+Through a combination of technical methods and artistic approaches, Harun Farkas employs technological critique to expose the implicit mechanisms by which image-based systems manipulate human perception and power structures, while challenging the neutrality of technology. His critique originated from examining the wartime use of imagery and its application within military-industrial complexes. Farkas discovered that technical images, though appearing to be objective records or experimental applications, inherently serve violent operations—a revelation that marked the beginning of his critical framework. Building on this insight, Farkas constructed a cybernetic power hierarchy spanning from the film era to the digital age. His early work *The Unextinguished Fire* juxtaposes film burn marks from cigarette stubble self-harm with images of napalm violence, revealing the material existence of visual media and its isomorphic relationship with violence. The artwork combines physical burn marks with chemical development processes, demonstrating how technological media records violence while simultaneously extending violent practices. This critique evolved into an ontological critique of image technology in *Images of the World and Inscriptions of War*. By contrasting aerial photographs of Auschwitz concentration camps taken during WWII with colonial-era facial mapping archives of Algerian women, Farkas exposed the cognitive violence inherent in technological vision—how the "scientific gaze" of measurement, classification, and coding transforms human bodies into controllable data objects, ultimately reducing image technology from a recording tool to an integral component of the war machine system. In his work *Serious Games*, Farouki examines the U.S. military's VR-based trauma treatment system, exposing the violence inherent in this simulated behavior. This analysis demonstrates a technical affinity between entertainment games and military violence. The study reveals how algorithms convert killing into automated processes through muscle memory encoding, generating invisible violence that can be easily concealed. Through his exploration of imaging technologies, Farouki's critique ultimately exposes the colonial logic of computability, where human free will becomes mere navigation trajectories in digital spaces.
+
+III. Characteristics of Digital Image in Parallel I-IV
+Using media archaeology, Faroqi conducts an in-depth analysis of the logic behind digital image generation, revealing the dual transformation path of computer-generated imagery from technical manipulation to cognitive reorganization. This work examines video games as a research subject, situating the creation process of digital game imagery within a genealogy that encompasses pre-cinema optical toys, classic film installations, and post-cinema screen practices.
+
+(1) Generation and Presentation of Digital Images
+In *Parallel I*, Faro traces the evolution of graphic design and generative techniques in computer games. Early 1980s games featured pixelated trees composed of horizontal and vertical lines, where visual elements were generated through simple positional and geometric relationships. Contemporary games have achieved near-true simulation of natural laws through algorithmic leaf models powered by game engines. This progression from "symbolic representation" to "algorithmic construction" is vividly demonstrated in *Parallel*. The process and outcomes of algorithmic image generation are explicitly visible. For instance, Faro's "scaffolding structure" for adjusting game perspectives reveals how floating digital islands are simulated through physics engine's collision detection and particle systems. While these computational systems don't produce tangible matter, their collision effects and particle simulations directly engage human senses, creating ever-changing perceptions. This demonstrates that digital imagery's realism stems from precise manipulation of sensory experiences rather than traditional photographic "realism." Through boundary-breaking spatial experimentation in *Parallel*, Faro exposes the "rootless nature" of digital imagery. A hallmark technique involves camera perspective detachment when characters traverse predefined physical barriers or fall into voids, revealing these objects as transient constructs shaped by the viewer's gaze—rather than pre-existing entities. This dynamically generated boundary mechanism reveals that the "realistic effect" of the game world does not rely on resemblance to reality, but rather depends on functional interactions between the body and the interface. Such interactions manifest when players become "operators" controlled by algorithmic rules during jumps following gravity parameters in digital imagery, while becoming "observers" shaped by visual feedback when facing dynamically blurred simulations of high-speed motion. In Parallel III, Faroqi relies on the camera to traverse the "backstage" of the game model, revealing the interface underlying digital scenes. The heavy-moving water bodies in the scene are merely transparent texture layers, mountain interiors consist of hollow geometric grids, and statue bases lack solid modeling. These elements thus appear to lack a shared material foundation—a universal universe governing them—all existing as interfaces integrating elements. This revelation of the "interface composite" demonstrates that the "surface" of digital imagery is not an impenetrable phantom, but a materialized manifestation of the underlying substrate. Their shared [Xu Yaping. The Operationalization of Moving Images: An Archaeological Study of Touchscreen Video Streaming Devices and Their Postural Phenomena [J]. International Journal of Journalism, 2020,42(06):55-75.]foundation is digital, encompassing algorithms and archives. In-game NPCs (non-player characters) with mechanical reactions and player characters' hollow expressions collectively form a metaphor for a unique "subjectivity." In real life, when short-video app users unconsciously consume image streams through "inertial scrolling," subjectivity gets encoded by software algorithms as parseable operational commands. As Elsesser points out, computers have transformed images into "images meant for clicking rather than viewing." This judgment emphasizes the operability over representational nature of computer-generated imagery. In Frusel's meta-narrative on the phenomenon of technical image poses, the synthetic representation of computer media—especially computer-generated imagery—is perceived as an interruption of the medium's experiential model. This prompts us to transcend textual analysis and examine the ubiquitous significance of computer images in everyday experience from the perspective of media ontology[].
+
+（2）Computational Image
+Harron Farkas's "Parallel I-IV" conducts an in-depth dissection of digital imagery's computational nature through a quadricomponent visual experiment. Using video games as his analytical subject, Farkas reveals that computer-generated imagery fundamentally differs from its purported role as a reality simulation, instead constituting a reconfiguration of visual order governed by algorithmic logic. In "Parallel I", the artist traces the technological evolution from 1980s pixelated lines to contemporary photographic realism, identifying this visual progression as "the triumph of generative algorithms". When tree textures are mass-produced via genetic programming, natural phenomena are reduced to parametric models. Images thus transcend empirical representation to become conceptual entities. This computational production signifies a paradigm shift in cognitive frameworks. As exemplified by the floating disc world in "Parallel II", its physical boundaries are defined by collision-detection algorithms. In gameplay, the "air walls" encountered by players manifest as tangible data structures, their existence entirely dependent on backend computational logic and floating-point operations.
+Farkas's "Parallel" can be interpreted as an analysis of computational imagery generation through the concept of "latent space". In the water simulation segment of "Parallel III", Farkas submerges the perspective beneath the digital ocean's surface. The void beneath the water's surface reflects that the water body does not conform to physical fluid dynamics, but rather represents mathematical trajectories diffusing in a low-dimensional vector space. This water surface essentially serves as a boundary for spatial transformation. When Farkas manipulates game characters traversing typified scenes, their movement trajectories become manifestations of probabilistic state transitions. The so-called "open world" free exploration is actually a finite state machine predefined by algorithms, with [Chen Chaoyan, Wang Ke. Mediated existence: the bidirectional evolution of digital imagery and human beings [J]. Contemporary Communication, 2024, (05):99-104.
+]computational imagery summarized as "abstract operations" driven by probability. This computational nature reaches its peak in "Parallel IV". The mechanical reactions of NPCs and player actions form a "cybernetic loop", incorporating human subjects into the individualization process of technological objects, becoming nodes within a black-box generation network. It can be said that the audience not only participates in the visual world but also constitutes part of it[]. Farkas's visual experiments also present the "boundary visualization mode" of game engines. When tree textures collapse into floating islands as the camera zooms out, the ultimate predicament of digital imagery's "rootlessness" becomes exposed. The computationally constructed world is essentially a projection of mathematical space, where players' constant collisions with boundaries tear negative fissures within algorithmic order. It can be said that Farkas's computational critique transcends mere technical analysis. In the finale of *Parallel*, Farouki suggests computational imagery is reviving photography's subversion of painting—when genetic algorithms replace wind turbines to generate' digital wind, 'image production shifts from optical recording to parameter-driven control. This computation-generated' frictionless interface' erases material traces, assimilating differences into a computational statistical distribution.
+
+(3) Analogicity of Digital Image
+In *Parallel*, Faroq explores the simulation order of computer-generated imagery through video game imagery, revealing a technological framework that replaces real-world causality with technical parameters. In *Parallel II*, the artist employs modeling tools to simulate weather systems. Initially focusing on digital raindrops' trajectories, the projected rain curtain appears to follow fluid dynamics principles, creating a "realistic" visual effect. However, this phenomenon stems from programmed particle motion, where collision detection only calculates contact surfaces with character models while ignoring complex interactions like air resistance and surface permeation. This represents "selective physical reduction" —a process of excluding elements while retaining others. Here, the "rain" signifier is reduced to a combination of collision volumes and particle velocities, transforming natural phenomena into "originless reality." Its simulation no longer references reality but strictly follows algorithmically self-consistent rules. The most revealing aspect emerges in *Parallel III*, where vegetation growth is depicted. When zooming in on a program-generated jungle, the distribution of tree branches exposes the mathematical framework of Poisson disk sampling. The so-called "natural randomness" is actually the result of precisely calibrated uniformity parameters. Algorithms erase biological randomness through statistical averaging, compressing ecological diversity into database samples of "perfect differences."
+Faroqi exposes the cognitive aggression of simulation in the empirical world. He argues that the essence of machine aesthetics lies in [[]Farocki H，War Always Finds a Way，Continent，2015，4.4，pp.54-60.
+]the "negation" of trivial matters—specifically, the rejection of details and complexity. In the physics engine demonstration of Parallel IV, the character's fall is decomposed into rigid-body dynamics calculations of joint rotations, reducing all biomechanical complexities of human movement to iterative computations of centroid coordinates and angular momentum. This technical reduction reveals a potential dilemma for the digital body: instead of existing through perceptual synthesis, the virtual body is reduced to mathematical objects through variable selection and interference exclusion. When players control characters traversing the ruins of Parallel I, the collapse animation of debris exposes the deceptive nature of physical simulation. The trajectory of falling stones is actually visual compensation from keyframe interpolation, where the illusion of "real-time computation" masks the violent temporal fragmentation of offline rendering. This algorithmic manipulation of time, achieved through real-time simulation, replaces Bergsonian life time with a "computable present," reconstructing human experience as discrete spatial slices.
+Faro's visual experiments ultimately reveal the political implications behind simulation. The recurring "Sky Box" scenes in Parallel III demonstrate the cost-effectiveness of digital spatial production. The infinite horizon in these visuals is a spherical map projection, with depth illusions achieved through cubic map algorithms. This spatial simulation reflects impoverishment, as the game engine transforms geographical differences into texture coordinates, converting real-world heterogeneity into reusable game asset packages. The deconstruction of water reflections in Parallel II's finale offers deeper insight: the original mirror-like reflections are replaced by screen space reflection technology, reducing optical laws to pixel color sampling. Water's materiality is completely dissolved into shader mathematical operations. This "mirror without foundation" logic ultimately rewrites the world's dynamic changes into matrix transformations within GPU pipelines.
+
+(4) Database Characteristics of Digital Images
+Faroqi decouples video game imagery from linear narratives, transforming it into discrete units that can be freely accessed, recombined, and indexed. This approach establishes a dynamic visual database system. The database's characteristics first emerge through systematic cataloging of computer-generated imagery's historical layers. "Parallel" constructs an indexable image typology by tracing stylistic evolution from abstract vertical-horizontal line compositions to photographic realism. The work juxtaposes the Lumiere brothers 'wave footage with Unity engine's fluid simulations, revealing how visual paradigms across media generations are encoded as retrievable data packets within the database's synchronic framework. In "Parallel II," the floating disc-shaped game world deconstructs the illusion of digital spatial continuity. The camera's traversal of the surface and immersion into voids expose virtual landscapes as layered collections of independent data. Physical attributes (e.g., water flow, mountain collision volumes) require programmed configuration—mountains and water bodies aren't pre-existing entities but real-time invoked datasets based on user perspective. This "on-demand generation" mechanism mirrors Google Earth's Pyramid Model, where high-resolution details activate only during user gaze while unobserved areas remain low-resolution.
+When players interact with the expressionless "human models" in *Parallel IV*, they engage with a preconfigured behavioral pattern library that includes dialogue trees and action modules. This means the system doesn't fully rely on the player's subjective imagination for free interaction. The digital entities serve as replaceable query results rather than narrative carriers in real-world interactions. Farouki's practice transcends mere technical critique, as his database logic implicitly questions the ontology of imagery. By contrasting the boundaries between early film screens and game discs, Farouki reveals the essence of contemporary digital imagery: "existence is rendered." When *Parallel III* showcases algorithmically filled infinite deserts, it exposes the "digital void" characteristic of databases. The visual richness of imagery actually stems from exhaustive parameter combinations, with images detached from physical-world connections to reconstruct reality's standards at the hyper-real level. Ultimately, *Parallel I-IV* itself becomes a heterogeneous database accommodating multiple temporalities. *Parallel* documents the evolution of computer graphics, hinting at the cognitive shift from film chemical development to pixel matrices, offering new perspectives for understanding visual politics in the digital age.
+                     
+IV. The Impact of Farouki's Digital Imaging Works
+
+(1) Impact on the Field of Imaging
+Farkas's digital imaging practice has exerted multifaceted influences in contemporary art and theory circles. His attempts to reconstruct the ethical and cognitive frameworks of imagery inspired Heter Schiele's interpretation of "rootlessness," while [[] Yang Guozhu. Heter Stier: Contemporary Strategies of Post-Film Cinema [J]. World Cinema, 2022, (06):40-51.]Schiele's creations can be seen as further practical implementations of Farkas's conceptual framework[]. In the field of art practice, Chinese curator Wang Shuman showcased Farkas's "Immortal Fire" in her curatorial project "The New Returner," pushing the connection between digital imagery and traumatic memory to more complex dimensions. By revealing how image systems "naturalize" disaster processing, she aimed to reflect the logic of technology obscuring reality. In Japanese artist Akihiko Ogawa's digital video installations, Farkas-style "programmatic repetition" was transformed into ritualistic performances of war memories. Additionally, Farkas's material studies of "interfaces" profoundly influenced Swiss artist Julian Chariel. Chariel's "Lava Flow" utilizes thermal imaging technology to capture real-time data streams of glacial melting, converting environmental crises [Thomas Elser, Li Yang, Huang Zhaojie. Film from the Perspective of Media Philology: An Interview with Thomas Elser [J]. Film Art, 2018, (03):111-117.]into visualized "technological trauma." Farkas also profoundly impacted the paradigm shift in contemporary image theory. Thomas Elser's concept of "media archaeology" was inspired by Farkas's multi-screen installation "Interface." Elser noted that media archaeology reveals the discontinuity of film history through a "retrospective-anticipation" approach, emphasizing that "our relationship with the past is not linear but activated through present issues[]." Falcone's works ultimately transcend the boundaries between traditional documentary and experimental film, establishing a paradigm of "meta-database" for art criticism in the digital age.
+
+(2) The Enlightenment of the Incalculable
+Haran Farkas's *Parallel I-IV* reveals the dialectical tension between the hegemony of "computability" and the resistance of "incomputability" within algorithmic logic through a technical archaeology of video game imagery. This evokes Alexander Galloway's reflections on "protocol control" and Yuk Hui's concept of "cosmic technology." Farkas's *Parallel* demonstrates that the "perfect simulation" of computer-generated imagery is essentially a practice of technological rationality. Algorithms reduce natural phenomena and perceptual experiences into quantifiable, replicable data models through parameters like lighting and motion trajectories, aiming to eliminate all ambiguity and contingency that cannot be computed. In his work *Incomputable*, Galloway introduces the concept of "[[]Alexander R. Galloway.Uncomputable：Play and Politics In the Long Digital Age[M].London:Verso,2021.]anti-computational practice," arguing that while computational systems reduce the world to executable instruction sets, they inherently contain "residues" that resist algorithmization—such as the ambiguity of intuition, the contingency of the body, and the discontinuity of history[]. Farkas's *Parallel* series exposes how this control logic operates at the level of visual perception: the simulation of "reality" through algorithms achieves its goal by forcibly quantifying abstraction by excluding incomputable experiences. Farkas's profundity lies in his refusal to merely express computational patterns or their impacts. Rather than relying on conventional methods, the work employs imagery—specifically, the contrast between algorithmically generated and hand-drawn naturalistic brushstrokes in the forest scenes of *Parallel IV*—to suggest how 'uncalculability' can be rediscovered. Throughout the image generation process, those life experiences that defy data representation precisely constitute the critical point resisting algorithmic homogenization.
+Xu Yu argues that technological development should be rooted in diverse local knowledge systems rather than singular computational rationality. He posits that "the incomputable [Xu Yu. Incomputable and Uncomputable [J]. New Fine Arts, 2020,41(10):5-13.
+]not only serves spiritual and religious purposes, but also forms the core of all economic and political systems transcending computability." The "perfect trees" generated by game engines in the *Parallel* series reveal a disconnect from real ecosystems due to their geometric rigidity. This disconnect precisely addresses the urgent challenge of "technological pluralism" emphasized by Xu Yu—how technology can accommodate elements that cannot be reduced to computational logic. In this context, Faroqi's photographic practice points to a new artistic approach: by exposing the limitations of algorithmic logic, art can activate possibilities beyond technical rationality. In an era where algorithms attempt to reduce the world to computable variables, art's mission shifts from representation or confrontation. Instead, through material interventions in technology, it uncovers algorithmic flaws, investigates questions algorithms consistently evade, and opens a path for free experience within the fissure between computability and incomputability.
+
+
+epilogue
+Helen Farouki's work *Parallel I-IV* transforms video games into an experimental medium, tracing the evolution from vector graphics to hyper-realistic rendering to reveal the fundamental contradictions of the digital age. Through "computable processing," algorithms compress natural laws and human perception into quantifiable data models, yet paradoxically reveal the potential of incomputability in their pursuit of "perfect simulation." Farouki's critical framework demonstrates that the "reality" of digital imagery is fundamentally a product of technological rationality. Algorithms abstract physical complexity into mathematical parameters and reduce human sensory diversity to standardized neural responses. This constructed "virtual reality" represents technology's control over experience, yet the cracks in this control lie precisely beyond the boundaries of "computability." When algorithms attempt to program all perceptions, the unquantifiable aspects of life experience become the starting point for resisting technological manipulation. By juxtaposing game engines and cinematic montage in multi-screen installations, Farouki transforms visual history into a "history of computational logic's failures." The more accurately algorithms simulate nature, the more they highlight their irreconcilability with human experience. This critical approach reveals that the truth of art resides in the "incomputability" beyond algorithmic capture—fragments of traumatic memories, the ambiguity of bodily experience, or the ambiguity of historical narratives. Farouki's legacy thus points to a new artistic ethics. As technological accelerationism attempts to assimilate everything through the narrative of "computation as truth", art must intervene in the material operations of algorithms. It must create a space for reflection in the confrontation between computability and incomputability, safeguarding those life experiences that refuse to be digitized.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Bachelor's Thesis, Guangxi Arts University</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Check for saved theme preference on page load
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+            }
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Close modal if clicked outside the content box
+        window.onclick = function(event) {
+            const modal = document.getElementById('myModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>
